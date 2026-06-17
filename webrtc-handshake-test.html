@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>MD Works — WebRTC Handshake Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Raleway:wght@300;400;500&family=Syne+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<style>
+:root {
+  --md-black: #0a0906;
+  --md-dark: #110e09;
+  --md-surface: #1a1610;
+  --md-panel: #211c14;
+  --md-border: #2c2619;
+  --md-border-lt: #3d3526;
+  --md-gold-dk: #7a5815;
+  --md-gold: #c9943c;
+  --md-gold-lt: #e8c87a;
+  --md-cream: #f0e6ce;
+  --md-muted: #7a6d58;
+  --md-success: #4caf7a;
+  --md-danger: #c94c4c;
+  --md-info: #4c8fc9;
+  --md-radius: 4px;
+  --md-radius-lg: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--md-dark);
+  color: var(--md-cream);
+  font-family: 'Raleway', sans-serif;
+  margin: 0;
+  padding: 1.5rem;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.ornament {
+  text-align: center;
+  color: var(--md-gold-dk);
+  font-size: 1.1rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--md-gold-lt);
+  text-align: center;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.4rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--md-gold-dk);
+  margin-bottom: 2rem;
+}
+
+.role-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-btn {
+  padding: 1.2rem 1rem;
+  background: var(--md-surface);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-lg);
+  color: var(--md-cream);
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.2s;
+  text-align: center;
+}
+
+.role-btn:hover {
+  border-color: var(--md-gold-dk);
+  transform: translateY(-2px);
+}
+
+.role-btn .role-icon {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  color: var(--md-gold-lt);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.panel {
+  background: var(--md-surface);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+
+.panel.active { display: block; }
+
+.panel h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--md-gold-lt);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.step-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--md-gold-dk);
+  margin-bottom: 1rem;
+}
+
+.qr-wrap {
+  background: var(--md-cream);
+  border-radius: var(--md-radius);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  min-height: 220px;
+}
+
+.qr-wrap img, .qr-wrap canvas {
+  max-width: 100%;
+}
+
+.camera-wrap {
+  position: relative;
+  background: var(--md-black);
+  border-radius: var(--md-radius);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  aspect-ratio: 1 / 1;
+}
+
+.camera-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scan-frame {
+  position: absolute;
+  inset: 12%;
+  border: 2px solid var(--md-gold);
+  border-radius: var(--md-radius);
+  pointer-events: none;
+  box-shadow: 0 0 0 999px rgba(10,9,6,0.45);
+}
+
+.status-line {
+  font-size: 0.85rem;
+  color: var(--md-muted);
+  text-align: center;
+  margin-bottom: 1rem;
+  min-height: 1.2rem;
+}
+
+.status-line.active { color: var(--md-gold-lt); }
+.status-line.success { color: var(--md-success); }
+.status-line.error { color: var(--md-danger); }
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem 1.6rem;
+  background: linear-gradient(135deg, var(--md-gold-dk), var(--md-gold));
+  color: var(--md-black);
+  border: none;
+  border-radius: var(--md-radius);
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-secondary {
+  width: 100%;
+  padding: 0.75rem 1.4rem;
+  background: transparent;
+  border: 1px solid var(--md-border-lt);
+  color: var(--md-muted);
+  border-radius: var(--md-radius);
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover { color: var(--md-gold-lt); border-color: var(--md-gold-dk); }
+
+.chat-box {
+  background: var(--md-panel);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius-lg);
+  padding: 1rem;
+  display: none;
+}
+
+.chat-box.active { display: block; }
+
+.chat-log {
+  height: 140px;
+  overflow-y: auto;
+  background: var(--md-black);
+  border-radius: var(--md-radius);
+  padding: 0.75rem;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.78rem;
+  margin-bottom: 0.75rem;
+}
+
+.chat-log .msg-mine { color: var(--md-gold-lt); }
+.chat-log .msg-theirs { color: var(--md-cream); }
+.chat-log .msg-sys { color: var(--md-muted); font-style: italic; }
+
+.chat-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input-row input {
+  flex: 1;
+  background: var(--md-black);
+  border: 1px solid var(--md-border-lt);
+  border-radius: var(--md-radius);
+  color: var(--md-cream);
+  padding: 0.6rem 0.8rem;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.85rem;
+}
+
+.chat-input-row input:focus {
+  outline: none;
+  border-color: var(--md-gold-dk);
+}
+
+.chat-input-row button {
+  background: var(--md-gold-dk);
+  color: var(--md-black);
+  border: none;
+  border-radius: var(--md-radius);
+  padding: 0 1.1rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 0 0.5rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--md-gold-dk);
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="ornament">✦</div>
+  <h1>WebRTC Handshake Test</h1>
+  <div class="subtitle">Optical QR Bootstrap · Peer-to-Peer Proof</div>
+
+  <div class="role-select" id="roleSelect">
+    <button class="role-btn" onclick="startHost()">
+      <span class="role-icon">I</span>
+      Host
+      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Generate QR first</div>
+    </button>
+    <button class="role-btn" onclick="startJoin()">
+      <span class="role-icon">II</span>
+      Join
+      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Scan QR first</div>
+    </button>
+  </div>
+
+  <!-- HOST FLOW -->
+  <div class="panel" id="hostPanel">
+    <h2>Host — Step <span id="hostStepNum">1</span> of 2</h2>
+    <div class="step-label" id="hostStepLabel">Generating connection offer</div>
+    <div class="qr-wrap" id="hostQrWrap">
+      <span style="color:#888;font-size:0.85rem;">Preparing…</span>
+    </div>
+    <div class="status-line" id="hostStatus">Gathering connection details…</div>
+    <button class="btn-primary" id="hostScanAnswerBtn" style="display:none" onclick="hostScanAnswer()">Scan Player 2's Reply</button>
+    <div class="camera-wrap" id="hostCameraWrap" style="display:none">
+      <video id="hostVideo" autoplay playsinline muted></video>
+      <div class="scan-frame"></div>
+    </div>
+    <button class="btn-secondary" onclick="resetAll()">Cancel</button>
+  </div>
+
+  <!-- JOIN FLOW -->
+  <div class="panel" id="joinPanel">
+    <h2>Join — Step <span id="joinStepNum">1</span> of 2</h2>
+    <div class="step-label" id="joinStepLabel">Scan the host's screen</div>
+    <div class="camera-wrap" id="joinCameraWrap">
+      <video id="joinVideo" autoplay playsinline muted></video>
+      <div class="scan-frame"></div>
+    </div>
+    <div class="qr-wrap" id="joinQrWrap" style="display:none">
+      <span style="color:#888;font-size:0.85rem;">Preparing…</span>
+    </div>
+    <div class="status-line" id="joinStatus">Point your camera at the host's QR code</div>
+    <button class="btn-secondary" onclick="resetAll()">Cancel</button>
+  </div>
+
+  <!-- CONNECTED CHAT TEST -->
+  <div class="chat-box" id="chatBox">
+    <h2 style="font-family:'Cinzel',serif;color:var(--md-success);font-size:0.95rem;margin:0 0 0.75rem;">✦ Connected — Peer-to-Peer Live</h2>
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type a test message…" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button onclick="sendChat()">Send</button>
+    </div>
+  </div>
+
+  <footer>✦ MD Works ✦</footer>
+</div>
+
+<script>
+let pc = null;
+let dataChannel = null;
+let role = null; // 'host' | 'join'
+let scanStream = null;
+let scanRAF = null;
+
+const RTC_CONFIG = {
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+};
+
+function log(elId, text, cls) {
+  const el = document.getElementById(elId);
+  el.textContent = text;
+  el.className = 'status-line' + (cls ? ' ' + cls : '');
+}
+
+function resetAll() {
+  if (pc) { pc.close(); pc = null; }
+  dataChannel = null;
+  stopCamera();
+  role = null;
+  document.getElementById('roleSelect').style.display = 'grid';
+  document.getElementById('hostPanel').classList.remove('active');
+  document.getElementById('joinPanel').classList.remove('active');
+  document.getElementById('chatBox').classList.remove('active');
+}
+
+function stopCamera() {
+  if (scanRAF) { cancelAnimationFrame(scanRAF); scanRAF = null; }
+  if (scanStream) {
+    scanStream.getTracks().forEach(t => t.stop());
+    scanStream = null;
+  }
+}
+
+// ---- Compact SDP encoding ----
+// A peer connection used ONLY for an RTCDataChannel (no audio/video tracks)
+// produces a much smaller SDP than a typical WebRTC call — there's no codec
+// negotiation, so none of the a=rtpmap/a=ssrc/a=extmap media attributes
+// exist in the first place. A data-channel-only offer is roughly a few
+// hundred bytes plus ICE candidates, comfortably within a single QR code's
+// capacity even with several network interfaces contributing candidates.
+// We still base64-encode the JSON wrapper for safe QR text encoding.
+function compactSDP(desc) {
+  const payload = { t: desc.type, s: desc.sdp };
+  return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+}
+
+function decompactSDP(text) {
+  const payload = JSON.parse(decodeURIComponent(escape(atob(text))));
+  return { type: payload.t, sdp: payload.s };
+}
+
+function renderQR(containerId, text) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  new QRCode(el, {
+    text: text,
+    width: 260,
+    height: 260,
+    colorDark: '#0a0906',
+    colorLight: '#f0e6ce',
+    correctLevel: QRCode.CorrectLevel.L
+  });
+}
+
+async function startCameraScan(videoId, onResult) {
+  const video = document.getElementById(videoId);
+  scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+  video.srcObject = scanStream;
+  await video.play();
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      if (code && code.data) {
+        stopCamera();
+        onResult(code.data);
+        return;
+      }
+    }
+    scanRAF = requestAnimationFrame(tick);
+  }
+  scanRAF = requestAnimationFrame(tick);
+}
+
+function setupDataChannelHandlers() {
+  dataChannel.onopen = () => {
+    document.getElementById('hostPanel').classList.remove('active');
+    document.getElementById('joinPanel').classList.remove('active');
+    document.getElementById('chatBox').classList.add('active');
+    appendChat('Connection established — this channel is now direct peer-to-peer.', 'sys');
+  };
+  dataChannel.onmessage = (e) => {
+    appendChat(e.data, 'theirs');
+  };
+  dataChannel.onclose = () => {
+    appendChat('Connection closed.', 'sys');
+  };
+}
+
+function appendChat(text, kind) {
+  const log = document.getElementById('chatLog');
+  const div = document.createElement('div');
+  div.className = 'msg-' + kind;
+  div.textContent = (kind === 'mine' ? '› ' : kind === 'sys' ? '· ' : '') + text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || !dataChannel || dataChannel.readyState !== 'open') return;
+  dataChannel.send(text);
+  appendChat(text, 'mine');
+  input.value = '';
+}
+
+// ===================== HOST FLOW =====================
+async function startHost() {
+  role = 'host';
+  document.getElementById('roleSelect').style.display = 'none';
+  document.getElementById('hostPanel').classList.add('active');
+  log('hostStatus', 'Gathering connection details…');
+
+  pc = new RTCPeerConnection(RTC_CONFIG);
+  dataChannel = pc.createDataChannel('game');
+  setupDataChannelHandlers();
+
+  pc.onicecandidate = () => {};
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  // Wait for ICE gathering to complete so the offer is self-contained
+  await waitForIceGatheringComplete(pc);
+
+  const encoded = compactSDP(pc.localDescription);
+  renderQR('hostQrWrap', encoded);
+  document.getElementById('hostStepLabel').textContent = 'Player 2: scan this code';
+  log('hostStatus', 'Show this code to Player 2', 'active');
+  document.getElementById('hostScanAnswerBtn').style.display = 'block';
+}
+
+function hostScanAnswer() {
+  document.getElementById('hostStepNum').textContent = '2';
+  document.getElementById('hostStepLabel').textContent = 'Scan Player 2\'s reply code';
+  document.getElementById('hostQrWrap').style.display = 'none';
+  document.getElementById('hostScanAnswerBtn').style.display = 'none';
+  document.getElementById('hostCameraWrap').style.display = 'block';
+  log('hostStatus', 'Point your camera at Player 2\'s screen', 'active');
+
+  startCameraScan('hostVideo', handleAnswerScanned);
+
+  async function handleAnswerScanned(data) {
+    document.getElementById('hostCameraWrap').style.display = 'none';
+    try {
+      const answer = decompactSDP(data);
+      await pc.setRemoteDescription(answer);
+      log('hostStatus', 'Connecting…', 'active');
+    } catch (err) {
+      log('hostStatus', 'Could not read that code — try again', 'error');
+      document.getElementById('hostCameraWrap').style.display = 'block';
+      startCameraScan('hostVideo', handleAnswerScanned);
+    }
+  }
+}
+
+// ===================== JOIN FLOW =====================
+async function startJoin() {
+  role = 'join';
+  document.getElementById('roleSelect').style.display = 'none';
+  document.getElementById('joinPanel').classList.add('active');
+  log('joinStatus', 'Point your camera at the host\'s QR code');
+
+  startCameraScan('joinVideo', onHostOfferScanned);
+}
+
+async function onHostOfferScanned(data) {
+  document.getElementById('joinCameraWrap').style.display = 'none';
+  log('joinStatus', 'Offer received — building reply…', 'active');
+
+  try {
+    const offer = decompactSDP(data);
+
+    pc = new RTCPeerConnection(RTC_CONFIG);
+    pc.ondatachannel = (event) => {
+      dataChannel = event.channel;
+      setupDataChannelHandlers();
+    };
+
+    await pc.setRemoteDescription(offer);
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    await waitForIceGatheringComplete(pc);
+
+    const encoded = compactSDP(pc.localDescription);
+    document.getElementById('joinStepNum').textContent = '2';
+    document.getElementById('joinStepLabel').textContent = 'Show this to the host';
+    document.getElementById('joinQrWrap').style.display = 'flex';
+    renderQR('joinQrWrap', encoded);
+    log('joinStatus', 'Show this code back to the host', 'active');
+  } catch (err) {
+    log('joinStatus', 'Could not read that code — point camera at host screen again', 'error');
+    document.getElementById('joinCameraWrap').style.display = 'block';
+    startCameraScan('joinVideo', onHostOfferScanned);
+  }
+}
+
+function waitForIceGatheringComplete(peerConnection) {
+  return new Promise((resolve) => {
+    if (peerConnection.iceGatheringState === 'complete') {
+      resolve();
+      return;
+    }
+    function check() {
+      if (peerConnection.iceGatheringState === 'complete') {
+        peerConnection.removeEventListener('icegatheringstatechange', check);
+        resolve();
+      }
+    }
+    peerConnection.addEventListener('icegatheringstatechange', check);
+    // Safety timeout — proceed anyway after 3s even if gathering is slow,
+    // most local-network candidates resolve well within this window.
+    setTimeout(resolve, 3000);
+  });
+}
+</script>
+
+</body>
+</html>
