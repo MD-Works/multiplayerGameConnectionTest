@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>MD Works — WebRTC Handshake Test</title>
+<title>MD Works — WebRTC Handshake Test (Text)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Raleway:wght@300;400;500&family=Syne+Mono&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <style>
 :root {
   --md-black: #0a0906;
@@ -23,7 +21,6 @@
   --md-muted: #7a6d58;
   --md-success: #4caf7a;
   --md-danger: #c94c4c;
-  --md-info: #4c8fc9;
   --md-radius: 4px;
   --md-radius-lg: 8px;
 }
@@ -133,78 +130,100 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.qr-wrap {
-  background: var(--md-cream);
-  border-radius: var(--md-radius);
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  min-height: 220px;
-  width: 100%;
-}
-
-.qr-wrap img, .qr-wrap canvas {
-  max-width: 100%;
-}
-
-.camera-wrap {
-  position: relative;
-  background: var(--md-black);
-  border-radius: var(--md-radius);
-  overflow: hidden;
-  margin-bottom: 1rem;
-  aspect-ratio: 1 / 1;
-}
-
-.camera-wrap video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.scan-frame {
-  position: absolute;
-  inset: 12%;
-  border: 2px solid var(--md-gold);
-  border-radius: var(--md-radius);
-  pointer-events: none;
-  box-shadow: 0 0 0 999px rgba(10,9,6,0.45);
-}
-
-.status-line {
-  font-size: 0.85rem;
+.field-label {
+  font-size: 0.78rem;
   color: var(--md-muted);
-  text-align: center;
-  margin-bottom: 1rem;
-  min-height: 1.2rem;
+  margin-bottom: 0.4rem;
 }
 
-.status-line.active { color: var(--md-gold-lt); }
-.status-line.success { color: var(--md-success); }
-.status-line.error { color: var(--md-danger); }
+.code-box {
+  background: var(--md-black);
+  border: 1px solid var(--md-border-lt);
+  border-radius: var(--md-radius);
+  padding: 0.85rem;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--md-gold-lt);
+  width: 100%;
+  resize: none;
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+  min-height: 90px;
+}
+
+.code-box.empty {
+  color: var(--md-muted);
+  font-style: italic;
+}
+
+.code-input {
+  width: 100%;
+  background: var(--md-black);
+  border: 1px solid var(--md-border-lt);
+  border-radius: var(--md-radius);
+  color: var(--md-cream);
+  padding: 0.7rem 0.85rem;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.78rem;
+  resize: vertical;
+  min-height: 90px;
+  margin-bottom: 0.75rem;
+}
+
+.code-input:focus {
+  outline: none;
+  border-color: var(--md-gold-dk);
+}
+
+.btn-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
 
 .btn-primary {
-  width: 100%;
-  padding: 0.85rem 1.6rem;
+  flex: 1;
+  padding: 0.85rem 1rem;
   background: linear-gradient(135deg, var(--md-gold-dk), var(--md-gold));
   color: var(--md-black);
   border: none;
   border-radius: var(--md-radius);
   font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.1s;
   text-transform: uppercase;
-  margin-bottom: 0.6rem;
 }
 
 .btn-primary:hover { opacity: 0.9; }
 .btn-primary:active { transform: scale(0.98); }
 .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-whatsapp {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  background: var(--md-panel);
+  border: 1px solid var(--md-success);
+  color: var(--md-success);
+  border-radius: var(--md-radius);
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-whatsapp:hover { opacity: 0.85; }
 
 .btn-secondary {
   width: 100%;
@@ -221,6 +240,31 @@ h1 {
 }
 
 .btn-secondary:hover { color: var(--md-gold-lt); border-color: var(--md-gold-dk); }
+
+.status-line {
+  font-size: 0.85rem;
+  color: var(--md-muted);
+  text-align: center;
+  margin: 0.5rem 0 1rem;
+  min-height: 1.2rem;
+}
+
+.status-line.active { color: var(--md-gold-lt); }
+.status-line.success { color: var(--md-success); }
+.status-line.error { color: var(--md-danger); }
+
+.divider {
+  border-top: 1px solid var(--md-border);
+  margin: 1.25rem 0;
+  padding-top: 1.25rem;
+}
+
+.note {
+  font-size: 0.72rem;
+  color: var(--md-muted);
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
 
 .chat-box {
   background: var(--md-panel);
@@ -296,49 +340,64 @@ footer {
 <div class="container">
   <div class="ornament">✦</div>
   <h1>WebRTC Handshake Test</h1>
-  <div class="subtitle">Optical QR Bootstrap · Peer-to-Peer Proof</div>
+  <div class="subtitle">Text Code · Share via WhatsApp</div>
 
   <div class="role-select" id="roleSelect">
     <button class="role-btn" onclick="startHost()">
       <span class="role-icon">I</span>
       Host
-      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Generate QR first</div>
+      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Create a game code</div>
     </button>
     <button class="role-btn" onclick="startJoin()">
       <span class="role-icon">II</span>
       Join
-      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Scan QR first</div>
+      <div style="font-size:0.7rem;color:var(--md-muted);margin-top:0.3rem;">Paste a game code</div>
     </button>
   </div>
 
   <!-- HOST FLOW -->
   <div class="panel" id="hostPanel">
     <h2>Host — Step <span id="hostStepNum">1</span> of 2</h2>
-    <div class="step-label" id="hostStepLabel">Generating connection offer</div>
-    <div class="qr-wrap" id="hostQrWrap">
-      <span style="color:#888;font-size:0.85rem;">Preparing…</span>
+    <div class="step-label" id="hostStepLabel">Your connection code</div>
+
+    <div class="field-label">Send this code to Player 2</div>
+    <textarea class="code-box empty" id="hostOfferBox" readonly>Preparing…</textarea>
+    <div class="btn-row">
+      <button class="btn-primary" id="hostCopyBtn" onclick="copyCode('hostOfferBox', 'hostCopyBtn')" disabled>Copy Code</button>
+      <a class="btn-whatsapp" id="hostWaBtn" href="#" target="_blank" rel="noopener">Open WhatsApp</a>
     </div>
-    <div class="status-line" id="hostStatus">Gathering connection details…</div>
-    <button class="btn-primary" id="hostScanAnswerBtn" style="display:none" onclick="hostScanAnswer()">Scan Player 2's Reply</button>
-    <div class="camera-wrap" id="hostCameraWrap" style="display:none">
-      <video id="hostVideo" autoplay playsinline muted></video>
-      <div class="scan-frame"></div>
+    <div class="note">Tap Copy, then Open WhatsApp and paste the code into your message before sending.</div>
+
+    <div class="divider">
+      <div class="field-label">Paste Player 2's reply code here</div>
+      <textarea class="code-input" id="hostAnswerInput" placeholder="Paste the code Player 2 sends back…"></textarea>
+      <button class="btn-primary" style="width:100%" onclick="hostSubmitAnswer()">Connect</button>
     </div>
+
+    <div class="status-line" id="hostStatus"></div>
     <button class="btn-secondary" onclick="resetAll()">Cancel</button>
   </div>
 
   <!-- JOIN FLOW -->
   <div class="panel" id="joinPanel">
     <h2>Join — Step <span id="joinStepNum">1</span> of 2</h2>
-    <div class="step-label" id="joinStepLabel">Scan the host's screen</div>
-    <div class="camera-wrap" id="joinCameraWrap">
-      <video id="joinVideo" autoplay playsinline muted></video>
-      <div class="scan-frame"></div>
+    <div class="step-label" id="joinStepLabel">Paste the host's code</div>
+
+    <div class="field-label">Paste the code Player 1 sent you</div>
+    <textarea class="code-input" id="joinOfferInput" placeholder="Paste the code here…"></textarea>
+    <button class="btn-primary" style="width:100%;margin-bottom:0.75rem" onclick="joinSubmitOffer()">Generate Reply Code</button>
+
+    <div id="joinReplySection" style="display:none">
+      <div class="field-label">Send this reply back to Player 1</div>
+      <textarea class="code-box empty" id="joinAnswerBox" readonly>Preparing…</textarea>
+      <div class="btn-row">
+        <button class="btn-primary" id="joinCopyBtn" onclick="copyCode('joinAnswerBox', 'joinCopyBtn')" disabled>Copy Code</button>
+        <a class="btn-whatsapp" id="joinWaBtn" href="#" target="_blank" rel="noopener">Open WhatsApp</a>
+      </div>
+      <div class="note">Tap Copy, then Open WhatsApp and paste the code into your reply before sending.</div>
     </div>
-    <div class="qr-wrap" id="joinQrWrap" style="display:none">
-      <span style="color:#888;font-size:0.85rem;">Preparing…</span>
-    </div>
-    <div class="status-line" id="joinStatus">Point your camera at the host's QR code</div>
+
+    <div class="status-line" id="joinStatus"></div>
     <button class="btn-secondary" onclick="resetAll()">Cancel</button>
   </div>
 
@@ -359,8 +418,6 @@ footer {
 let pc = null;
 let dataChannel = null;
 let role = null; // 'host' | 'join'
-let scanStream = null;
-let scanRAF = null;
 
 const RTC_CONFIG = {
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -375,7 +432,6 @@ function log(elId, text, cls) {
 function resetAll() {
   if (pc) { pc.close(); pc = null; }
   dataChannel = null;
-  stopCamera();
   role = null;
   document.getElementById('roleSelect').style.display = 'grid';
   document.getElementById('hostPanel').classList.remove('active');
@@ -383,87 +439,76 @@ function resetAll() {
   document.getElementById('chatBox').classList.remove('active');
 }
 
-function stopCamera() {
-  if (scanRAF) { cancelAnimationFrame(scanRAF); scanRAF = null; }
-  if (scanStream) {
-    scanStream.getTracks().forEach(t => t.stop());
-    scanStream = null;
-  }
+// ---- Obfuscation layer ----
+// This is NOT encryption — the SDP offer/answer isn't sensitive data, it's
+// connection metadata (IP/port/DTLS fingerprint), and WhatsApp already
+// encrypts the message itself in transit. This step exists purely so the
+// shared text doesn't look like raw technical gibberish sitting in a chat
+// thread — a simple reversible character shift, wrapped with a short
+// recognisable prefix so the receiving side can tell it's a valid game
+// code at a glance before even trying to parse it.
+const CODE_PREFIX = 'MDW1-';
+
+function obfuscate(text) {
+  const shifted = text.split('').map(ch => {
+    const code = ch.charCodeAt(0);
+    return String.fromCharCode(code + 3);
+  }).join('');
+  return CODE_PREFIX + btoa(unescape(encodeURIComponent(shifted)));
 }
 
-// ---- Compact SDP encoding ----
-// A peer connection used ONLY for an RTCDataChannel (no audio/video tracks)
-// produces a much smaller SDP than a typical WebRTC call — there's no codec
-// negotiation, so none of the a=rtpmap/a=ssrc/a=extmap media attributes
-// exist in the first place. A data-channel-only offer is roughly a few
-// hundred bytes plus ICE candidates.
-//
-// IMPORTANT: we do NOT base64-encode this. Base64 exists to make binary-safe
-// data safe inside text formats like JSON/URLs — but QR codes already have a
-// native byte mode that stores raw text directly. Base64 would only inflate
-// the payload by ~33% for no benefit here, eating into our error-correction
-// budget. We pass the plain JSON string straight to the QR encoder instead,
-// which lets us afford a much higher error-correction level (better scan
-// reliability under real-world handheld/lighting conditions) for the same
-// physical code size.
+function deobfuscate(rawCode) {
+  const trimmed = rawCode.trim();
+  if (!trimmed.startsWith(CODE_PREFIX)) {
+    throw new Error('Not a recognised game code');
+  }
+  const body = trimmed.slice(CODE_PREFIX.length);
+  const shifted = decodeURIComponent(escape(atob(body)));
+  const original = shifted.split('').map(ch => {
+    const charCode = ch.charCodeAt(0);
+    return String.fromCharCode(charCode - 3);
+  }).join('');
+  return original;
+}
+
 function compactSDP(desc) {
   const payload = { t: desc.type, s: desc.sdp };
-  return JSON.stringify(payload);
+  return obfuscate(JSON.stringify(payload));
 }
 
-function decompactSDP(text) {
-  const payload = JSON.parse(text);
+function decompactSDP(code) {
+  const json = deobfuscate(code);
+  const payload = JSON.parse(json);
   return { type: payload.t, sdp: payload.s };
 }
 
-function renderQR(containerId, text) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = '';
-  // Render at the container's real available width rather than a fixed
-  // guess — on a narrow phone viewport a hardcoded px size can get
-  // squeezed by max-width:100% scaling, undoing the size we intended.
-  // Capping at 320 keeps it from becoming awkwardly large on bigger screens.
-  const available = Math.min(el.clientWidth - 32, 320); // minus qr-wrap padding
-  const size = Math.max(220, available);
-  // Level Q (25% error correction) trades some data capacity for much
-  // better tolerance of screen glare, camera angle, and motion blur —
-  // the conditions a phone-scanning-another-phone's-screen setup hits
-  // constantly. Affordable now that we dropped the base64 overhead above.
-  new QRCode(el, {
-    text: text,
-    width: size,
-    height: size,
-    colorDark: '#0a0906',
-    colorLight: '#f0e6ce',
-    correctLevel: QRCode.CorrectLevel.Q
-  });
+function setCodeBox(boxId, text) {
+  const box = document.getElementById(boxId);
+  box.value = text;
+  box.classList.remove('empty');
 }
 
-async function startCameraScan(videoId, onResult) {
-  const video = document.getElementById(videoId);
-  scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-  video.srcObject = scanStream;
-  await video.play();
-
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-
-  function tick() {
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
-      if (code && code.data) {
-        stopCamera();
-        onResult(code.data);
-        return;
-      }
-    }
-    scanRAF = requestAnimationFrame(tick);
+async function copyCode(boxId, btnId) {
+  const box = document.getElementById(boxId);
+  const text = box.value;
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById(btnId);
+    const original = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  } catch (err) {
+    // Clipboard API can fail without a secure context, without a direct
+    // synchronous user-gesture call (notably on Safari/iOS), or without
+    // permission — fall back to selecting the textarea's text so the
+    // player can still copy manually via the native selection menu.
+    box.focus();
+    box.select();
   }
-  scanRAF = requestAnimationFrame(tick);
+}
+
+function buildWhatsAppLink(promptText) {
+  return 'https://wa.me/?text=' + encodeURIComponent(promptText);
 }
 
 function setupDataChannelHandlers() {
@@ -482,12 +527,12 @@ function setupDataChannelHandlers() {
 }
 
 function appendChat(text, kind) {
-  const log = document.getElementById('chatLog');
+  const logEl = document.getElementById('chatLog');
   const div = document.createElement('div');
   div.className = 'msg-' + kind;
   div.textContent = (kind === 'mine' ? '› ' : kind === 'sys' ? '· ' : '') + text;
-  log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
 }
 
 function sendChat() {
@@ -497,97 +542,6 @@ function sendChat() {
   dataChannel.send(text);
   appendChat(text, 'mine');
   input.value = '';
-}
-
-// ===================== HOST FLOW =====================
-async function startHost() {
-  role = 'host';
-  document.getElementById('roleSelect').style.display = 'none';
-  document.getElementById('hostPanel').classList.add('active');
-  log('hostStatus', 'Gathering connection details…');
-
-  pc = new RTCPeerConnection(RTC_CONFIG);
-  dataChannel = pc.createDataChannel('game');
-  setupDataChannelHandlers();
-
-  pc.onicecandidate = () => {};
-
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-
-  // Wait for ICE gathering to complete so the offer is self-contained
-  await waitForIceGatheringComplete(pc);
-
-  const encoded = compactSDP(pc.localDescription);
-  renderQR('hostQrWrap', encoded);
-  document.getElementById('hostStepLabel').textContent = 'Player 2: scan this code';
-  log('hostStatus', 'Show this code to Player 2', 'active');
-  document.getElementById('hostScanAnswerBtn').style.display = 'block';
-}
-
-function hostScanAnswer() {
-  document.getElementById('hostStepNum').textContent = '2';
-  document.getElementById('hostStepLabel').textContent = 'Scan Player 2\'s reply code';
-  document.getElementById('hostQrWrap').style.display = 'none';
-  document.getElementById('hostScanAnswerBtn').style.display = 'none';
-  document.getElementById('hostCameraWrap').style.display = 'block';
-  log('hostStatus', 'Point your camera at Player 2\'s screen', 'active');
-
-  startCameraScan('hostVideo', handleAnswerScanned);
-
-  async function handleAnswerScanned(data) {
-    document.getElementById('hostCameraWrap').style.display = 'none';
-    try {
-      const answer = decompactSDP(data);
-      await pc.setRemoteDescription(answer);
-      log('hostStatus', 'Connecting…', 'active');
-    } catch (err) {
-      log('hostStatus', 'Could not read that code — try again', 'error');
-      document.getElementById('hostCameraWrap').style.display = 'block';
-      startCameraScan('hostVideo', handleAnswerScanned);
-    }
-  }
-}
-
-// ===================== JOIN FLOW =====================
-async function startJoin() {
-  role = 'join';
-  document.getElementById('roleSelect').style.display = 'none';
-  document.getElementById('joinPanel').classList.add('active');
-  log('joinStatus', 'Point your camera at the host\'s QR code');
-
-  startCameraScan('joinVideo', onHostOfferScanned);
-}
-
-async function onHostOfferScanned(data) {
-  document.getElementById('joinCameraWrap').style.display = 'none';
-  log('joinStatus', 'Offer received — building reply…', 'active');
-
-  try {
-    const offer = decompactSDP(data);
-
-    pc = new RTCPeerConnection(RTC_CONFIG);
-    pc.ondatachannel = (event) => {
-      dataChannel = event.channel;
-      setupDataChannelHandlers();
-    };
-
-    await pc.setRemoteDescription(offer);
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    await waitForIceGatheringComplete(pc);
-
-    const encoded = compactSDP(pc.localDescription);
-    document.getElementById('joinStepNum').textContent = '2';
-    document.getElementById('joinStepLabel').textContent = 'Show this to the host';
-    document.getElementById('joinQrWrap').style.display = 'flex';
-    renderQR('joinQrWrap', encoded);
-    log('joinStatus', 'Show this code back to the host', 'active');
-  } catch (err) {
-    log('joinStatus', 'Could not read that code — point camera at host screen again', 'error');
-    document.getElementById('joinCameraWrap').style.display = 'block';
-    startCameraScan('joinVideo', onHostOfferScanned);
-  }
 }
 
 function waitForIceGatheringComplete(peerConnection) {
@@ -603,10 +557,91 @@ function waitForIceGatheringComplete(peerConnection) {
       }
     }
     peerConnection.addEventListener('icegatheringstatechange', check);
-    // Safety timeout — proceed anyway after 3s even if gathering is slow,
-    // most local-network candidates resolve well within this window.
     setTimeout(resolve, 3000);
   });
+}
+
+// ===================== HOST FLOW =====================
+async function startHost() {
+  role = 'host';
+  document.getElementById('roleSelect').style.display = 'none';
+  document.getElementById('hostPanel').classList.add('active');
+  log('hostStatus', 'Gathering connection details…', 'active');
+
+  pc = new RTCPeerConnection(RTC_CONFIG);
+  dataChannel = pc.createDataChannel('game');
+  setupDataChannelHandlers();
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await waitForIceGatheringComplete(pc);
+
+  const code = compactSDP(pc.localDescription);
+  setCodeBox('hostOfferBox', code);
+  document.getElementById('hostCopyBtn').disabled = false;
+  document.getElementById('hostWaBtn').href = buildWhatsAppLink(
+    'Join my Spite & Malice game — open the app, tap Join, then paste this code:\n\n' + code
+  );
+  log('hostStatus', 'Code ready — send it to Player 2', 'active');
+}
+
+async function hostSubmitAnswer() {
+  const raw = document.getElementById('hostAnswerInput').value;
+  if (!raw.trim()) {
+    log('hostStatus', 'Paste the reply code first', 'error');
+    return;
+  }
+  try {
+    const answer = decompactSDP(raw);
+    await pc.setRemoteDescription(answer);
+    document.getElementById('hostStepNum').textContent = '2';
+    log('hostStatus', 'Connecting…', 'active');
+  } catch (err) {
+    log('hostStatus', 'That code didn\'t look right — check it was pasted in full', 'error');
+  }
+}
+
+// ===================== JOIN FLOW =====================
+function startJoin() {
+  role = 'join';
+  document.getElementById('roleSelect').style.display = 'none';
+  document.getElementById('joinPanel').classList.add('active');
+  log('joinStatus', 'Paste the code Player 1 sent you');
+}
+
+async function joinSubmitOffer() {
+  const raw = document.getElementById('joinOfferInput').value;
+  if (!raw.trim()) {
+    log('joinStatus', 'Paste the host\'s code first', 'error');
+    return;
+  }
+
+  try {
+    const offer = decompactSDP(raw);
+
+    pc = new RTCPeerConnection(RTC_CONFIG);
+    pc.ondatachannel = (event) => {
+      dataChannel = event.channel;
+      setupDataChannelHandlers();
+    };
+
+    await pc.setRemoteDescription(offer);
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    await waitForIceGatheringComplete(pc);
+
+    const code = compactSDP(pc.localDescription);
+    document.getElementById('joinStepNum').textContent = '2';
+    document.getElementById('joinReplySection').style.display = 'block';
+    setCodeBox('joinAnswerBox', code);
+    document.getElementById('joinCopyBtn').disabled = false;
+    document.getElementById('joinWaBtn').href = buildWhatsAppLink(
+      'Here\'s my reply code — paste this back into the game:\n\n' + code
+    );
+    log('joinStatus', 'Reply ready — send it back to Player 1', 'active');
+  } catch (err) {
+    log('joinStatus', 'That code didn\'t look right — check it was pasted in full', 'error');
+  }
 }
 </script>
 
