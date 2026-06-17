@@ -580,7 +580,7 @@ async function startHost() {
   setCodeBox('hostOfferBox', code);
   document.getElementById('hostCopyBtn').disabled = false;
   document.getElementById('hostWaBtn').href = buildWhatsAppLink(
-    'Join my Spite & Malice game — open the app, tap Join, then paste this code:\n\n' + code
+    'Join my Spite & Malice game — open the app, tap Join, then paste the connection code here: '
   );
   log('hostStatus', 'Code ready — send it to Player 2', 'active');
 }
@@ -636,7 +636,7 @@ async function joinSubmitOffer() {
     setCodeBox('joinAnswerBox', code);
     document.getElementById('joinCopyBtn').disabled = false;
     document.getElementById('joinWaBtn').href = buildWhatsAppLink(
-      'Here\'s my reply code — paste this back into the game:\n\n' + code
+      'Here\'s my reply code, paste it here: '
     );
     log('joinStatus', 'Reply ready — send it back to Player 1', 'active');
   } catch (err) {
