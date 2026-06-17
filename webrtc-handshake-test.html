@@ -142,6 +142,7 @@ h1 {
   justify-content: center;
   margin-bottom: 1rem;
   min-height: 220px;
+  width: 100%;
 }
 
 .qr-wrap img, .qr-wrap canvas {
@@ -395,29 +396,46 @@ function stopCamera() {
 // produces a much smaller SDP than a typical WebRTC call — there's no codec
 // negotiation, so none of the a=rtpmap/a=ssrc/a=extmap media attributes
 // exist in the first place. A data-channel-only offer is roughly a few
-// hundred bytes plus ICE candidates, comfortably within a single QR code's
-// capacity even with several network interfaces contributing candidates.
-// We still base64-encode the JSON wrapper for safe QR text encoding.
+// hundred bytes plus ICE candidates.
+//
+// IMPORTANT: we do NOT base64-encode this. Base64 exists to make binary-safe
+// data safe inside text formats like JSON/URLs — but QR codes already have a
+// native byte mode that stores raw text directly. Base64 would only inflate
+// the payload by ~33% for no benefit here, eating into our error-correction
+// budget. We pass the plain JSON string straight to the QR encoder instead,
+// which lets us afford a much higher error-correction level (better scan
+// reliability under real-world handheld/lighting conditions) for the same
+// physical code size.
 function compactSDP(desc) {
   const payload = { t: desc.type, s: desc.sdp };
-  return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  return JSON.stringify(payload);
 }
 
 function decompactSDP(text) {
-  const payload = JSON.parse(decodeURIComponent(escape(atob(text))));
+  const payload = JSON.parse(text);
   return { type: payload.t, sdp: payload.s };
 }
 
 function renderQR(containerId, text) {
   const el = document.getElementById(containerId);
   el.innerHTML = '';
+  // Render at the container's real available width rather than a fixed
+  // guess — on a narrow phone viewport a hardcoded px size can get
+  // squeezed by max-width:100% scaling, undoing the size we intended.
+  // Capping at 320 keeps it from becoming awkwardly large on bigger screens.
+  const available = Math.min(el.clientWidth - 32, 320); // minus qr-wrap padding
+  const size = Math.max(220, available);
+  // Level Q (25% error correction) trades some data capacity for much
+  // better tolerance of screen glare, camera angle, and motion blur —
+  // the conditions a phone-scanning-another-phone's-screen setup hits
+  // constantly. Affordable now that we dropped the base64 overhead above.
   new QRCode(el, {
     text: text,
-    width: 260,
-    height: 260,
+    width: size,
+    height: size,
     colorDark: '#0a0906',
     colorLight: '#f0e6ce',
-    correctLevel: QRCode.CorrectLevel.L
+    correctLevel: QRCode.CorrectLevel.Q
   });
 }
 
